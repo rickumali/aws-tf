@@ -59,6 +59,8 @@ resource "aws_instance" "example_instance" {
               tar -zxf k9s_Linux_amd64.tar.gz k9s
               install -o root -g docker ./k9s /usr/local/bin
   EOF
+  user_data_replace_on_change = true
+
   tags = {
     Name = "example-instance"
   }
