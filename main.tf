@@ -8,12 +8,11 @@ resource "aws_security_group" "example_sg" {
   name        = "example-security-group"
   description = "Example security group for SSH access"
 
-  # 96.230.64.226/32	- Public Library, 73.4.138.165 - Apartment
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["96.230.64.226/32", "73.4.138.165/32"]
+    cidr_blocks = var.ingress_cidr_blocks
   }
   ingress {
     from_port   = 80
