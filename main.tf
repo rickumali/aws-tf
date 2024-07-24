@@ -38,10 +38,10 @@ resource "aws_instance" "example_instance" {
       spot_instance_type = "one-time"
     }
   }
-  instance_type          = "t2.medium" # Specify the desired instance type
-  key_name               = "rick-pair"
-  vpc_security_group_ids = [aws_security_group.example_sg.id]
-  user_data              = <<-EOF
+  instance_type               = "t2.medium" # Specify the desired instance type
+  key_name                    = "rick-pair"
+  vpc_security_group_ids      = [aws_security_group.example_sg.id]
+  user_data                   = <<-EOF
               #!/bin/bash
               yum -q -y update
               yum -q -y install nginx docker.x86_64
