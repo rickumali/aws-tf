@@ -86,3 +86,7 @@ resource "aws_elb" "example_elb" {
 
   instances = [aws_instance.example_instance.id]
 }
+
+data "aws_vpc" "default" {
+  default = true
+}
