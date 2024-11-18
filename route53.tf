@@ -1,6 +1,10 @@
+data "aws_route53_zone" "existing_zone" {
+  name = "test.gitmol.com"
+}
+
 resource "aws_route53_record" "example_route53_record" {
-  zone_id = var.zone_id
-  name    = var.domain_name
+  zone_id = data.aws_route53_zone.existing_zone.id
+  name    = "${var.test_subdomain_name}.test.gitmol.com"
   type    = "A"
 
   alias {
