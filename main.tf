@@ -76,6 +76,14 @@ resource "aws_elb" "example_elb" {
     lb_protocol       = "HTTP"
   }
 
+  listener {
+    instance_port      = 443
+    instance_protocol  = "HTTPS"
+    lb_port            = 443
+    lb_protocol        = "HTTPS"
+    ssl_certificate_id = aws_acm_certificate.devcert.id
+  }
+
   health_check {
     target              = "HTTP:80/"
     interval            = 30
