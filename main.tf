@@ -30,6 +30,34 @@ resource "aws_security_group" "ec2_secgrp" {
   }
 }
 
+resource "aws_security_group" "elb_secgrp" {
+  name        = "elb-security-group"
+  description = "Example security group for ELB with SSL Termination"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // This enables full egress
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
 resource "aws_instance" "example_instance" {
   ami = "ami-092b51d9008adea15" # Specify the desired AMI ID
   instance_market_options {
@@ -91,6 +119,9 @@ resource "aws_elb" "example_elb" {
     healthy_threshold   = 2
     timeout             = 5
   }
+
+
+  security_groups = [aws_security_group.elb_secgrp.id]
 
   instances = [aws_instance.example_instance.id]
 }
