@@ -4,8 +4,8 @@ provider "aws" {
   region = "us-east-2" # Specify your desired AWS region
 }
 
-resource "aws_security_group" "example_sg" {
-  name        = "example-security-group"
+resource "aws_security_group" "ec2_secgrp" {
+  name        = "ec2-security-group"
   description = "Example security group for SSH access"
 
   ingress {
@@ -40,7 +40,7 @@ resource "aws_instance" "example_instance" {
   }
   instance_type               = "t2.medium" # Specify the desired instance type
   key_name                    = "rick-pair"
-  vpc_security_group_ids      = [aws_security_group.example_sg.id]
+  vpc_security_group_ids      = [aws_security_group.ec2_secgrp.id]
   user_data                   = <<-EOF
               #!/bin/bash
               yum -q -y update
