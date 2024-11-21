@@ -104,9 +104,10 @@ resource "aws_elb" "example_elb" {
     lb_protocol       = "HTTP"
   }
 
+  // This configuration terminates the SSL request at the ELB
   listener {
-    instance_port      = 443
-    instance_protocol  = "HTTPS"
+    instance_port      = 80
+    instance_protocol  = "HTTP"
     lb_port            = 443
     lb_protocol        = "HTTPS"
     ssl_certificate_id = aws_acm_certificate.devcert.id
