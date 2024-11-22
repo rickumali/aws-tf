@@ -14,6 +14,8 @@ resource "aws_security_group" "ec2_secgrp" {
     protocol    = "tcp"
     cidr_blocks = var.ingress_cidr_blocks
   }
+
+  // Inbound HTTP comes from ELB only
   ingress {
     from_port       = 80
     to_port         = 80
