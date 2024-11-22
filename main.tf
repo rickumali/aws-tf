@@ -15,10 +15,10 @@ resource "aws_security_group" "ec2_secgrp" {
     cidr_blocks = var.ingress_cidr_blocks
   }
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.elb_secgrp.id]
   }
 
   // This enables full egress
