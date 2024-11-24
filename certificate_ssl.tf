@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "devcert" {
-  domain_name       = "${var.test_subdomain_name}.test.gitmol.com"
+  domain_name       = "${local.test_subdomain_name}.test.gitmol.com"
   validation_method = "DNS"
 
   tags = {
