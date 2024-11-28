@@ -116,7 +116,7 @@ resource "aws_elb" "example_elb" {
     instance_protocol  = "HTTP"
     lb_port            = 443
     lb_protocol        = "HTTPS"
-    ssl_certificate_id = aws_acm_certificate.devcert.id
+    ssl_certificate_id = data.aws_acm_certificate.devcert.id
   }
 
   health_check {

@@ -9,6 +9,6 @@ output "vpc_id" {
 }
 
 output "domain_name" {
-  value       = aws_acm_certificate.devcert.domain_name
+  value       = data.aws_acm_certificate.devcert.domain
   description = "The newly created domain name"
 }
