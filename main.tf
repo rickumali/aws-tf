@@ -99,40 +99,74 @@ resource "aws_instance" "example_instance" {
   }
 }
 
-resource "aws_elb" "example_elb" {
-  name               = "example-elb"
-  availability_zones = ["us-east-2a", "us-east-2b", "us-east-2c"] # Specify the desired availability zones
-
-  listener {
-    instance_port     = 80
-    instance_protocol = "HTTP"
-    lb_port           = 80
-    lb_protocol       = "HTTP"
-  }
-
-  // This configuration terminates the SSL request at the ELB
-  listener {
-    instance_port      = 80
-    instance_protocol  = "HTTP"
-    lb_port            = 443
-    lb_protocol        = "HTTPS"
-    ssl_certificate_id = data.aws_acm_certificate.devcert.id
-  }
+resource "aws_lb_target_group" "http_target" {
+  name     = "http-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = data.aws_vpc.default.id
 
   health_check {
-    target              = "HTTP:80/"
-    interval            = 30
-    unhealthy_threshold = 2
-    healthy_threshold   = 2
-    timeout             = 5
+    healthy_threshold   = "3"
+    matcher             = "200"
+    path                = "/"
+    protocol            = "HTTP"
+    timeout             = "5"
+    interval            = "30"
+    unhealthy_threshold = "2"
   }
+}
 
+# Listener
+resource "aws_lb_listener" "front_end_http" {
+  load_balancer_arn = aws_lb.example_alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.http_target.arn
+  }
+}
+
+resource "aws_lb_listener" "front_end_https" {
+  load_balancer_arn = aws_lb.example_alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = data.aws_acm_certificate.devcert.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.http_target.arn
+  }
+}
+
+resource "aws_lb" "example_alb" {
+  name               = "example-alb"
+  load_balancer_type = "application"
 
   security_groups = [aws_security_group.elb_secgrp.id]
-
-  instances = [aws_instance.example_instance.id]
+  subnets         = [for s in data.aws_subnet.subnet : s.id]
 }
 
 data "aws_vpc" "default" {
   default = true
+}
+
+data "aws_subnets" "default_vpc_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+data "aws_subnet" "subnet" {
+  for_each = toset(data.aws_subnets.default_vpc_subnets.ids)
+  id       = each.value
+}
+
+resource "aws_lb_target_group_attachment" "lb_attachment" {
+  target_group_arn = aws_lb_target_group.http_target.arn
+  target_id        = aws_instance.example_instance.id
+  port             = 80
 }
