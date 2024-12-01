@@ -141,6 +141,11 @@ resource "aws_lb_listener" "front_end_https" {
   }
 }
 
+resource "aws_lb_listener_certificate" "httpbin" {
+  listener_arn    = aws_lb_listener.front_end_https.arn
+  certificate_arn = data.aws_acm_certificate.httpbincert.arn
+}
+
 resource "aws_lb" "example_alb" {
   name               = "example-alb"
   load_balancer_type = "application"
