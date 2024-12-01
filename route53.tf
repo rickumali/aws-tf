@@ -8,8 +8,8 @@ resource "aws_route53_record" "example_route53_record" {
   type    = "A"
 
   alias {
-    name                   = aws_elb.example_elb.dns_name
-    zone_id                = aws_elb.example_elb.zone_id
+    name                   = aws_lb.example_alb.dns_name
+    zone_id                = aws_lb.example_alb.zone_id
     evaluate_target_health = true
   }
 }
