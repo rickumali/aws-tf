@@ -1,7 +1,4 @@
 data "aws_acm_certificate" "devcert" {
-  domain = "${local.test_subdomain_name}.test.gitmol.com"
-}
-
-data "aws_acm_certificate" "httpbincert" {
-  domain = "httpbin.test.gitmol.com"
+  for_each = toset(var.test_subdomain_names)
+  domain   = "${each.value}.test.gitmol.com"
 }
