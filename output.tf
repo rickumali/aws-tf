@@ -8,7 +8,7 @@ output "vpc_id" {
   description = "The Default VPC's ID"
 }
 
-output "domain_name" {
-  value       = data.aws_acm_certificate.devcert.domain
+output "domain_names" {
+  value       = values(data.aws_acm_certificate.devcert)[*].domain
   description = "The newly created domain name"
 }
