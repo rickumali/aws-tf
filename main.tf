@@ -124,12 +124,17 @@ resource "aws_lb_listener" "front_end_http" {
   }
 }
 
+locals {
+  first_cert      = slice(var.test_subdomain_names, 0, 1)
+  remaining_certs = slice(var.test_subdomain_names, 1, length((var.test_subdomain_names)))
+}
+
 resource "aws_lb_listener" "front_end_https" {
   load_balancer_arn = aws_lb.example_alb.arn
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = data.aws_acm_certificate.devcert.arn
+  certificate_arn   = data.aws_acm_certificate.devcert[local.first_cert[0]].arn
 
   default_action {
     type             = "forward"
@@ -137,9 +142,10 @@ resource "aws_lb_listener" "front_end_https" {
   }
 }
 
-resource "aws_lb_listener_certificate" "httpbin" {
+resource "aws_lb_listener_certificate" "otherdomain" {
+  for_each        = toset(local.remaining_certs)
   listener_arn    = aws_lb_listener.front_end_https.arn
-  certificate_arn = data.aws_acm_certificate.httpbincert.arn
+  certificate_arn = data.aws_acm_certificate.devcert[each.value].arn
 }
 
 resource "aws_lb" "example_alb" {
