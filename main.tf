@@ -4,10 +4,6 @@ provider "aws" {
   region = "us-east-2" # Specify your desired AWS region
 }
 
-locals {
-  test_subdomain_name = "web"
-}
-
 resource "aws_security_group" "ec2_secgrp" {
   name        = "ec2-security-group"
   description = "Example security group for SSH access"
